@@ -17,6 +17,8 @@ public class Event implements Serializable
     public String title;
     public String startdate;
     public String enddate;
+    public String date;
+    public String time;
 
     //private Date deleted;
 
@@ -57,11 +59,13 @@ public class Event implements Serializable
     public Event(){}
 
 
-    public Event (String title, String startdate, String enddate)
+    public Event (String title, String startdate, String enddate, String date, String time)
     {
         this.title = title;
         this.startdate = startdate;
         this.enddate = enddate;
+        this.date = date;
+        this.time = time;
 
     }
 
@@ -108,5 +112,20 @@ public class Event implements Serializable
 
     public void setEnddate(String enddate) {
         this.enddate = enddate;
+    }
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

@@ -66,7 +66,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     String title;
     String startdate;
     String enddate;
-
+    String date;
+    String time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -103,8 +104,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
 
     private void setMonthView()
     {
-        Log.d("monthYearFromDate(CalendarUtils.selectedDate", monthYearFromDate(CalendarUtils.selectedDate));
-
         //년 월 텍스트뷰
         monthYearText.setText(monthYearFromDate(CalendarUtils.selectedDate));
 
@@ -139,6 +138,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         setMonthView();
     }
 
+    //ㅇㅇ
     @Override
     public void onItemClick(int position, LocalDate date)
     {
@@ -155,11 +155,12 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     private void setEventAdapter()
     {
         //ID 로 목록 찾고 리스트 호출
-        dailyEvents = eventsForDate(CalendarUtils.selectedDate);
-//        eventAdapter = new EventAdapter(getApplicationContext(), dailyEvents, items);
-        eventAdapter = new EventAdapter(this, this, dailyEvents);
-
+        ArrayList<Event> dailyEvents = eventsForDate(CalendarUtils.selectedDate);
+//        eventAdapter = new EventAdapter(getApplicationContext(), dailyEvents);
+        EventAdapter eventAdapter = new EventAdapter(this, this, dailyEvents);
         eventListView.setAdapter(eventAdapter);
+//        eventAdapter.notifyDataSetChanged();
+
 
     }
 
@@ -191,6 +192,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     {
         super.onResume();
         setEventAdapter();
+        eventsList.clear();
     }
 
     // 주어진 날짜에 대한 모든 이벤트 반환
@@ -208,7 +210,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
             String endDate1 = eventsList.get(k).getEnddate();  //종료날짜
             Date selectDate = null;
 
-            Log.d("시작날짜", startDate1);
+            /*Log.d("시작날짜", startDate1);*/
 
 
             try {
@@ -345,49 +347,28 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
             try {
                 JSONObject jsonObject = new JSONObject(mJsonString);
                 JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
-
+//                eventsList.clear();
                 for (int i = 0; i < jsonArray.length(); i++) {
+                    if (jsonArray.length() != 0) {
+                        JSONObject item = jsonArray.getJSONObject(i);
+                        Log.d(TAG, "JSONObject : " + item);
 
-                    JSONObject item = jsonArray.getJSONObject(i);
-                    Log.d(TAG, "JSONObject : " + item);
-
-                    title = item.getString("title");
-                    startdate = item.getString("startdate");
-                    enddate = item.getString("enddate");
+                        title = item.getString("title");
+                        startdate = item.getString("startdate");
+                        enddate = item.getString("enddate");
+                        date = item.getString("date");
+                        time = item.getString("time");
 
 //                    titles.add(title); //items_name ArrayList에 php에서 받아온 item_name 추가
 //                    startdates.add(startdate); //items_name ArrayList에 php에서 받아온 item_name 추가
 //                    enddates.add(enddate); //items_content ArrayList에 php에서 받아온 item_content 추가
 
-                    eventsList.add(new Event(title,startdate,enddate));
+                        eventsList.add(new Event(title, startdate, enddate, date, time));
 
-                    Log.d(TAG, "eventsList : " + eventsList.toString());
-//
-//                    eventAdapter.addItem(eventsList.get(i));
-//                    eventAdapter.notifyDataSetChanged();
+                        Log.d(TAG, "eventsList : " + eventsList.toString());
 
-//                    eventsList.get(i).setStartdate(startdate);
-//                    eventsList.get(i).setEnddate(enddate);
-
-
-//                    Log.d(TAG, "titles : " + titles.toString());
-//                    Log.d(TAG, "startdates : " + startdates.toString());
-//                    Log.d(TAG, "enddates : " + enddates.toString());
-
-//                    Log.d(TAG, "eventsList : " + eventsList.toString());
-
-//                    items.add(new Event(titles.get(i),startdates.get(i),enddates.get(i)));
-
-                    //eventsList_test.add(items.get(i));
-                    //Log.d(TAG, "items : " + items.get(i).getTitle() + items.get(i).getStartdate() + items.get(i).getEnddate());
-
-                    //Log.d(TAG, "items : " + eventsForDate(CalendarUtils.selectedDate).get(i));
-//
-//                    eventAdapter.addItem(items.get(i));
-//                    eventAdapter.notifyDataSetChanged();
-
+                    }
                 }
-
             } catch (JSONException e) {
 
                 Log.d(TAG, "showResult_member : ", e);

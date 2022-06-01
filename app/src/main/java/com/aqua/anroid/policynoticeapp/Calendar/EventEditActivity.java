@@ -34,8 +34,9 @@ public class EventEditActivity extends AppCompatActivity {
     private static String TAG = "phptest";
 
     private EditText eventTitleET;
-    private TextView eventDateTV, eventTimeTV, startDateTV, endDateTV;
-    private Button deleteEventBtn, eventDatePickerBtn;
+    private TextView Date, Time, startDateTV, endDateTV;
+    private Button eventDatePickerBtn;
+//    private Button deleteEventBtn;
 
     public Event selectedEvent;
     private LocalTime time; // 현지 시간으로 시간 호출
@@ -50,7 +51,10 @@ public class EventEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_edit);
         initWidgets();
+
         time = LocalTime.now(); // 지금 현지 시간으로 초기화
+        Date.setText(String.valueOf(CalendarUtils.selectedDate));
+        Time.setText(CalendarUtils.formattedTime(time));
 
         SharedPreferences sharedPreferences = getSharedPreferences("userID",MODE_PRIVATE);
         userID  = sharedPreferences.getString("userID","");
@@ -62,8 +66,11 @@ public class EventEditActivity extends AppCompatActivity {
     private void initWidgets()
     {
         eventTitleET = findViewById(R.id.eventTitleET);
-        deleteEventBtn = findViewById(R.id.deleteEventBtn);
+//        deleteEventBtn = findViewById(R.id.deleteEventBtn);
         eventDatePickerBtn = findViewById(R.id.eventDatePickerBtn);
+
+        Date = findViewById(R.id.Date);
+        Time = findViewById(R.id.Time);
 
         startDateTV = findViewById(R.id.startDateTV);
         endDateTV = findViewById(R.id.endDateTV);
@@ -85,11 +92,11 @@ public class EventEditActivity extends AppCompatActivity {
             endDateTV.setText(selectedEvent.getEnddate());
 
         }
-        else
-        {
-            //새로운 이벤트 생성 시 삭제 버튼 숨김
-            deleteEventBtn.setVisibility(View.INVISIBLE);
-        }
+//        else
+//       {
+//          //새로운 이벤트 생성 시 삭제 버튼 숨김
+//           deleteEventBtn.setVisibility(View.INVISIBLE);
+//        }
     }
 
     public void saveEventAction(View View)
@@ -97,6 +104,8 @@ public class EventEditActivity extends AppCompatActivity {
         String eventTitle = eventTitleET.getText().toString();
         String eventStartDate = startDateTV.getText().toString();
         String eventEndDate = endDateTV.getText().toString();
+        String eventDate = Date.getText().toString();
+        String eventTime = Time.getText().toString();
 
 
         if (selectedEvent == null) {
@@ -104,7 +113,7 @@ public class EventEditActivity extends AppCompatActivity {
 //            nNumberID++;
 
             InsertData task = new InsertData();
-            task.execute("http://" + IP_ADDRESS + "/event_insert.php", userID, eventTitle, eventStartDate,eventEndDate);
+            task.execute("http://" + IP_ADDRESS + "/event_insert.php", userID, eventTitle, eventStartDate,eventEndDate,eventDate,eventTime);
 
 
         }
@@ -123,14 +132,14 @@ public class EventEditActivity extends AppCompatActivity {
 
     }
 
-    // 이벤트 삭제
+  /*  // 이벤트 삭제
     public void deleteEventAction(View view) {
         // 새 날짜를 호출하여 삭제된 시간을 제공
         CalendarActivity.eventsList.remove(selectedEvent);
         //db 설정
         //db 업데이트
         startActivity(new Intent(this, CalendarActivity.class));
-    }
+    }*/
 
     //날짜 선택
     public void datepickerAction(View view) {
@@ -199,9 +208,12 @@ public class EventEditActivity extends AppCompatActivity {
             String eventTitle = (String) params[2];
             String eventStartDate = (String) params[3];
             String eventEndDate = (String) params[4];
+            String eventDate = (String) params[5];
+            String eventTime = (String) params[6];
 
             String serverURL = (String) params[0];
-            String postParameters = "userID=" + userID + "&title=" + eventTitle + "&startdate=" + eventStartDate + "&enddate=" + eventEndDate;
+            String postParameters = "userID=" + userID + "&title=" + eventTitle + "&startdate=" + eventStartDate + "&enddate=" + eventEndDate
+                    + "&date=" + eventDate + "&time=" + eventTime;
 
 
             try {
