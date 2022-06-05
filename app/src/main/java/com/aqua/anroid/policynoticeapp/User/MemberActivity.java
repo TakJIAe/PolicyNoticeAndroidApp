@@ -575,8 +575,8 @@ public class MemberActivity extends AppCompatActivity implements ParsingAdapter.
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 
 
-                httpURLConnection.setReadTimeout(5000);
-                httpURLConnection.setConnectTimeout(5000);
+                httpURLConnection.setReadTimeout(10000);
+                httpURLConnection.setConnectTimeout(10000);
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoInput(true);
                 httpURLConnection.connect();

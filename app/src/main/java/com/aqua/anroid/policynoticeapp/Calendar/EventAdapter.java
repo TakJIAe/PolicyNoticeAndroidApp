@@ -11,10 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,26 +49,24 @@ public class EventAdapter extends BaseAdapter{
     ArrayList<Event> items;
     Context context;
     Activity activity;
-//    public EventAdapter(@NonNull Context context, ArrayList<Event> events, ArrayList<Event> items)
-//    {
-//        super(context, 0, events); //super 호출 위해 resource 0 지정
-//        this.context = context;
-//        this.events = events;
-//        this.items = items;
-//    }
 
+  /*  EventListener eventListener;
+
+    interface Listener{
+        void onEdit(String title, String startdate, String enddate, String date, String time );
+
+    }
+    private  Listener listener;
+    public void setListener(Listener listener){
+        this.listener = listener;
+    }
+*/
     public EventAdapter(Context context, Activity activity, ArrayList<Event> events)
     {
-        //super(context, 0, events); //super 호출 위해 resource 0 지정
         this.context = context;
         this.activity = activity;
         this.events = events;
-
-        //this.items = items;
-//        Log.d(TAG, "selectedDate : " + CalendarUtils.selectedDate.toString());
-
     }
-
 
     //뷰홀더 추가
     class ViewHolder {
@@ -84,32 +86,39 @@ public class EventAdapter extends BaseAdapter{
 
     //지정한 위치(i)에 있는 데이터 리턴턴
     @Override
-    public Object getItem(int i) {
-        return events.get(i);
+    public Object getItem(int position) {
+        return events.get(position);
     }
 
     //지정한 위치(i)에 있는 데이터와 관계된 아이템(row)의 ID를 리턴
     @Override
-    public long getItemId(int i) {
-        return i;
+    public long getItemId(int position) {
+        return position;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
     {
-        Log.d("어뎁터 갱신", "어뎁터 갱신");
+        final int po = position;
+        final Context context = parent.getContext();
 
-        LocalDate date;
-//        ViewHolder holder = new ViewHolder();
+  /*      EditText eventTitleET = (EditText) findViewById(R.id.eventTitleET);
+        TextView startDateTV = convertView.findViewById(R.id.startDateTV);
+        TextView endDateTV = convertView.findViewById(R.id.endDateTV);
+        TextView eventDate = convertView.findViewById(R.id.Date);
+        TextView eventTime = convertView.findViewById(R.id.Time);
+*/
+
+
+//        Log.d("어뎁터 갱신", "어뎁터 갱신");
         final ViewHolder holder;//아이템 내 view들을 저장할 holder 생성
 
         final Event event_item = events.get(position);
 
-        Log.d(TAG, "events_adapter : " + events.toString());
+//        Log.d(TAG, "events_adapter : " + events.toString());
 
 
-        //이벤트 항목 가져옴
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -117,28 +126,23 @@ public class EventAdapter extends BaseAdapter{
 
             holder = new ViewHolder();
 
-//            convertView = LayoutInflater.from(getContext()).inflate(R.layout.event_cell, parent, false);
-            /*convertView.findViewById(R.id.eventTitleTV);*/
-
             holder.eventTitleTV = (TextView) convertView.findViewById(R.id.eventTitleTV);
             holder.eventStartDateTV = (TextView) convertView.findViewById(R.id.eventStartDateTV);
             holder.eventEndDateTV = (TextView) convertView.findViewById(R.id.eventEndDateTV);
             holder.eventDateTV = (TextView) convertView.findViewById(R.id.eventDateTV);
             holder.eventTimeTV = (TextView) convertView.findViewById(R.id.eventTimeTV);
 
+
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
 
-        //if(CalendarUtils.selectedDate.equals(event_item.getStartdate())){
         holder.eventTitleTV.setText(event_item.getTitle());
         holder.eventStartDateTV.setText(event_item.getStartdate());
         holder.eventEndDateTV.setText(event_item.getEnddate());
         holder.eventDateTV.setText(event_item.getDate());
         holder.eventTimeTV.setText(event_item.getTime());
-
-        //}
 
         ImageButton eventDeleteBtn = (ImageButton) convertView.findViewById(R.id.eventDeleteBtn);
         eventDeleteBtn.setOnClickListener(new View.OnClickListener() {
@@ -146,9 +150,6 @@ public class EventAdapter extends BaseAdapter{
             public void onClick(View v) {
                 DeleteEvent task = new DeleteEvent();
                 task.execute(holder.eventTimeTV.getText().toString());
-//                eventsList.clear();
-//                CalendarActivity.eventsList.remove(selectedEvent);
-
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
                 alertDialogBuilder
                         .setMessage("이벤트 삭제")
@@ -163,9 +164,48 @@ public class EventAdapter extends BaseAdapter{
                                 });
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
-//                eventsList.clear();
             }
         });
+        ImageButton eventEditBtn = (ImageButton) convertView.findViewById(R.id.eventEditBtn);
+        eventEditBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(v.getContext(), events.get(po).getTime(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(v.getContext(), EventEditActivity.class);
+                intent.putExtra("title", events.get(po).getTitle());
+                intent.putExtra("startdate", events.get(po).getStartdate());
+                intent.putExtra("enddate", events.get(po).getEnddate());
+                intent.putExtra("date", events.get(po).getDate());
+                intent.putExtra("time", events.get(po).getTime());
+
+                Log.e("editTime", events.get(po).getTime());
+
+                //time 으로 수정 구별하기
+                //수정일때(버튼클릭시) 해당 리스트의 time을 보냄
+                intent.putExtra(Event.Event_EDIT_EXTRA, events.get(po).getTime());
+
+
+/*              id값을 db에 대입ㅎㅐ..?
+                intent.putExtra(Event.Event_EDIT_EXTRA, events.get(po)...)
+*/
+                context.startActivity(intent);
+/*
+
+                // EditBtn 누르면 동작을 해당 인터페이스의 인스턴스에 넘긴다.
+                if(eventListener != null)
+                    eventListener.onEventEdit(title, startdate, enddate, date, time);*/
+
+                /*if(listener != null){
+                 *//*  Intent intent = new Intent(v.getContext(), EventEditActivity.class);
+                    context.startActivity(intent);*//*
+                    // 클릭한 리스트의 데이터
+
+                    listener.onEdit(title, startdate, enddate, date, time);}
+                   }
+*/
+            }
+        });
+
 
 
      /*   Log.d(TAG, "selectedDate : " + CalendarUtils.selectedDate.toString());
@@ -177,10 +217,10 @@ public class EventAdapter extends BaseAdapter{
         return convertView;
     }
 
-    // 아이템 데이터 추가를 위한 함수.
+/*    // 아이템 데이터 추가를 위한 함수.
     public void addItem(Event items) {
         events.add(items);
-    }
+    }*/
 
 
     class DeleteEvent extends AsyncTask<String, Void, String> {

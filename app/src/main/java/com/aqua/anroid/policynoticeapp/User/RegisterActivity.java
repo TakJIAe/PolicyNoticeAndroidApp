@@ -158,8 +158,8 @@ public class RegisterActivity extends AppCompatActivity {
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 
 
-                httpURLConnection.setReadTimeout(5000); //5초안에 응답이 오지 않으면 예외가 발생
-                httpURLConnection.setConnectTimeout(5000);  //5초안에 연결이 안되면 예외가 발생
+                httpURLConnection.setReadTimeout(10000); //5초안에 응답이 오지 않으면 예외가 발생
+                httpURLConnection.setConnectTimeout(10000);  //5초안에 연결이 안되면 예외가 발생
                 httpURLConnection.setRequestMethod("POST"); //요청방식으로 POST로 한다.
                 httpURLConnection.connect();
 

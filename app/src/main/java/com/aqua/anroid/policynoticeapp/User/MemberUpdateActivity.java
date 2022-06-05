@@ -75,7 +75,7 @@ public class MemberUpdateActivity extends AppCompatActivity {
             }
         });
 
-        /*아디디 출력*/
+        /*아이디 출력*/
         SharedPreferences sharedPreferences = getSharedPreferences("userID",MODE_PRIVATE);
         String userID  = sharedPreferences.getString("userID","");
         Log.d(TAG, "intent결과_update : " + userID);

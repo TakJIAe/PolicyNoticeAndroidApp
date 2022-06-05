@@ -20,41 +20,6 @@ public class Event implements Serializable
     public String date;
     public String time;
 
-    //private Date deleted;
-
-//    // 주어진 날짜에 대한 모든 이벤트 반환
-//    public static ArrayList<Event> eventsForDate(LocalDate date) {
-//        ArrayList<Event> events = new ArrayList<>();
-//
-//        for (Event event : eventsList)
-//        {
-//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//            String selectDate1 = date.toString();   //현재누른날짜
-//            String startDate1 = event.getStartdate();  //시작날짜
-//            String endDate1 = event.getEnddate();  //종료날짜
-//            Date selectDate = null;
-//
-//
-//            try {
-//                selectDate = dateFormat.parse(selectDate1);
-//
-//                Date startDate  = dateFormat.parse(startDate1);
-//                Date endDate    = dateFormat.parse(endDate1);
-//
-//                int result1 = selectDate.compareTo(startDate);       // curr > d1
-//                int result2 = selectDate.compareTo(endDate);
-//
-//                // 조건이 맞을때
-//                if((result1>=0)&&(result2<=0))
-//                    events.add(event);
-//            }
-//            catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return events;
-//    }
 
     public Event(){}
 
@@ -68,17 +33,16 @@ public class Event implements Serializable
         this.time = time;
 
     }
+    public Event (int id, String title, String startdate, String enddate, String date, String time)
+    {
+        this.id = id;
+        this.title = title;
+        this.startdate = startdate;
+        this.enddate = enddate;
+        this.date = date;
+        this.time = time;
 
-//    public static Event getEventForID(int passedEventID)
-//    {
-//        for(Event event : eventsList)
-//        {
-//            if(event.getId() == passedEventID)
-//                return event;
-//        }
-//        return null;
-//    }
-
+    }
 
     public int getId() {
         return id;
